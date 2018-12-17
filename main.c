@@ -7,44 +7,54 @@
 
 #define MAX_INPUT 20
 
+char **parseCommand (char *input)
+{
+    char **command = malloc (MAX_INPUT * sizeof (char *));
+    char *delimeter = " ";
+    char *token;
+    int index = 0;
+
+    token = strtok (input, delimeter);
+    while (token)
+    {
+        command[index++] = token;
+        token = strtok (NULL, delimeter);
+    }
+
+    /*  Terminator */
+    command[index] = NULL;
+    return command;
+}
+
 int main (int argc, char *argv[])
 {
+
+    pid_t pid;
+    char **args;
     char input[MAX_INPUT];
 
     printf ("<cmd> ");
-
-    char *command = "";
-    char *args = "";
-
-    char delim[] = " ";
-
     scanf ("%99[0-9a-zA-Z ]", input);
+    args = parseCommand (input);
 
-    command = strtok (input, " ");
+    pid = fork ();
 
-    while (command)
+    /* Child */
+    if (pid == 0)
     {
-        printf ("%s\n", command);
-        command = (NULL, " ");
+
+        execv (args[0], args);
+        exit (0);
+
+    }
+        /* Father */
+    else
+    {
+
+        waitpid (pid, 0, 0);
+        free (args);
+
     }
 
-
-
-
-
-
-
-//    pid_t pid = fork ();
-//
-//    if (pid == 0)
-//    {
-////        static char *argv[] = {"reverse", *argv[1]};
-//
-//        execv ("reverse", argv);
-//        exit (-1);
-//    } else
-//    {
-//        waitpid (pid, 0, 0);
-//    }
     return 0;
 }
